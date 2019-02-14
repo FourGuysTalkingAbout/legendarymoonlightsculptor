@@ -54,8 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('text').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return Text("Connecting...");
-        return Container();
+        if (!snapshot.hasData) return CircularProgressIndicator();
+        return FirestoreListView(documents: snapshot.data.documents);
       },
     );
   }
@@ -68,5 +68,36 @@ class _MyHomePageState extends State<MyHomePage> {
           hintText: 'type your instance name',
           labelText: 'instance name',
         ));
+  }
+}
+
+class FirestoreListView extends StatelessWidget {
+  final List<DocumentSnapshot> documents;
+
+  FirestoreListView({this.documents});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: documents.length,
+      itemExtent: 90.0,
+      itemBuilder: (BuildContext context, int index) {
+        String title = documents[index].data['first field'].toString();
+
+        return ListTile(
+          title: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                border: Border.all(color: Colors.amber),
+              ),
+              padding: EdgeInsets.all(5.0),
+              child: Row(children: [
+                Expanded(
+                  child: Text(title),
+                )
+              ])),
+        );
+      },
+    );
   }
 }
