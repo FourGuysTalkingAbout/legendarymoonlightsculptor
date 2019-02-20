@@ -36,6 +36,22 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('text form field test'),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Firestore.instance
+                  .runTransaction((Transaction transaction) async {
+                CollectionReference reference =
+                    Firestore.instance.collection("text");
+
+                await reference
+                    .document("Instance Name")
+                    .setData({"Instance Name": ""});
+              });
+            },
+          )
+        ],
       ),
       body: _buildBody(context),
       floatingActionButton: buildFloatingActionButton(),
@@ -45,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   FloatingActionButton buildFloatingActionButton() {
     return FloatingActionButton(
       onPressed: _getInstanceName,
-      tooltip: 'Increment',
+      tooltip: 'create new instance',
       child: Icon(Icons.add),
     );
   }
@@ -69,8 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
           labelText: 'instance name',
         ));
   }
-
-  Widget _testPR() {}
 }
 
 class FirestoreListView extends StatelessWidget {
@@ -84,7 +98,7 @@ class FirestoreListView extends StatelessWidget {
       itemCount: documents.length,
       itemExtent: 90.0,
       itemBuilder: (BuildContext context, int index) {
-        String title = documents[index].data['first field'].toString();
+        String title = documents[index].data['Instance Name'].toString();
 
         return ListTile(
           title: Container(
