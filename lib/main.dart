@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
+final instanceName = "name2";
+final mainCollectionName = "name";
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -32,9 +35,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final titleString = 'text form field test';
     return Scaffold(
       appBar: AppBar(
-        title: Text('text form field test'),
+        title: Text(titleString),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
@@ -43,11 +47,12 @@ class _MyHomePageState extends State<MyHomePage> {
               Firestore.instance
                   .runTransaction((Transaction transaction) async {
                 CollectionReference reference =
-                    Firestore.instance.collection("text");
+                    Firestore.instance.collection(mainCollectionName);
 
                 await reference
-                    .document("Instance Name")
-                    .setData({"Instance Name": ""});
+                    .add({instanceName: "whats my name 8th time now"});
+//                    .document("instance name 2")
+//                    .setData({"name": ""});
               });
             },
           )
@@ -68,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('text').snapshots(),
+      stream: Firestore.instance.collection(mainCollectionName).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return CircularProgressIndicator();
         return FirestoreListView(documents: snapshot.data.documents);
@@ -98,7 +103,7 @@ class FirestoreListView extends StatelessWidget {
       itemCount: documents.length,
       itemExtent: 90.0,
       itemBuilder: (BuildContext context, int index) {
-        String title = documents[index].data['Instance Name'].toString();
+        String title = documents[index].data[instanceName].toString();
 
         return ListTile(
           title: Container(
